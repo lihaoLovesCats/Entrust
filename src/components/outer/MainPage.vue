@@ -108,13 +108,17 @@ export default {
   },
   async mounted() {
     const { data: res } = await this.$http.post("getTaskByPublisher",JSON.parse(window.sessionStorage.getItem("user")).userId);
-      this.taskList = res.tasks;
-      console.log(res.tasks)
+    console.log(res)
+    this.taskList = res.tasks
+    // this.taskList = res.tasks.filter((task) => {
+      //   task.state != 3//不把已完成的任务显示出来
+      // });
+      //console.log(res.tasks)
   }
 }
 </script>
 
-<style>
+<style lang='less' scoped>
 .mainContainer{
   justify-content: space-between;
 }

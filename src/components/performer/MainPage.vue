@@ -1,23 +1,24 @@
 <template>
   <div class="mainContainer">
-    <div class="taskList">
+    <div class="tasklist">
       <el-container class="tasks">
         <el-header height="30px">
           <span>任务清单：</span>
         </el-header>
         <el-main class="mainFrame">
-          <el-carousel :interval="-1" type="card" height="650px" direction="vertical">
-            <el-carousel-item v-for="item in shownTasks" :key="item.id">
+          <el-carousel :interval="-1" type="card" height="800px">
+            <el-carousel-item v-for="item in taskList" :key="item.id">
               <task-card
                   :taskId="item.taskId"
                   :taskName="item.taskName"
                   :description="item.description"
                   :state="item.state"
                   :publisherId="item.publisherId"
-
+                  :showBtn="true"
                   :timeLimit="item.timeLimit"
                   :address="item.address"
                   :reward="item.reward"
+                  :receivable="!curTask.taskId"
               >
               </task-card>
             </el-carousel-item>
@@ -25,13 +26,14 @@
         </el-main>
       </el-container>
     </div>
-    <div class="curTask">
+    <div class="curtask">
       <el-container class="tasks">
         <el-header height="30px">
           <span>当前任务：</span>
         </el-header>
         <el-main class="mainFrame">
           <task-card
+              v-if="curTask.taskId"
               :taskId="curTask.taskId"
               :taskName="curTask.taskName"
               :description="curTask.description"
@@ -41,18 +43,21 @@
               :timeLimit="curTask.timeLimit"
               :address="curTask.address"
               :reward="curTask.reward"
+              :receivable="curTask.taskId"
           >
           </task-card>
         </el-main>
         <el-footer>
           <el-button
+              v-if="curTask.taskId"
               type="primary"
               @click="finishTask">
             完成任务
           </el-button>
           <el-button
+              v-if="curTask.taskId"
               type="danger"
-              @click="stopTask">
+              @click="stopTaskByPerformer">
             取消任务
           </el-button>
         </el-footer>
@@ -63,7 +68,7 @@
 
 <script>
 import TaskCard from '../TaskCard'
-import PublishTask from './PublishTask'
+// import PublishTask from './PublishTask'
 export default {
   data() {
     return {
@@ -91,21 +96,21 @@ export default {
         // reward: "80",
         // },
       ],
-      shownTasks:this.taskList.filter((tsk) => {
-        return tsk.index < 10
-      }),
+      
       curTask:{},
       publishFlag:false
     }
   },
   methods: {
     async finishTask() {
-      const { data: res } = await this.$http.post("finishTask",this.curTask.taskId);
+      const { data: res } = await this.$http.post("finishTaskPerformer",this.curTask.taskId);
       this.curTask = {}
+      this.$router.go(0);//刷新当前页面
     },
-    async stopTask() {
-      const { data: res } = await this.$http.post("stopTask",this.curTask.taskId);
+    async stopTaskByPerformer() {
+      const { data: res } = await this.$http.post("stopTaskByPerformer",this.curTask.taskId);
       this.curTask = {}
+      this.$router.go(0);//刷新当前页面
     },
     handleClose(done) {
       this.$confirm('确认关闭？')
@@ -122,31 +127,36 @@ export default {
   },
   components: {
     TaskCard,
-    PublishTask,
+    // PublishTask,
 
   },
   async mounted() {
     const { data: res1 } = await this.$http.post("getAllTasks",JSON.parse(window.sessionStorage.getItem("user")).userId);
     this.taskList = res1.tasks;
     const { data: res2 } = await this.$http.post("getTaskByPerformer",JSON.parse(window.sessionStorage.getItem("user")).userId);
-    this.curTask = res2.task;
+    this.curTask = res2;
     //console.log(res.tasks)
   }
 }
 </script>
 
-<style>
+<style lang='less' scoped>
 .mainContainer{
   /*background: white;*/
-  margin-top: 8px;
-  text-align: center;
-  float:left;
-  width:100%;
-}
-.taskList{
+  
   background-color: rgb(125, 199, 153);
+  
+  /* float:left; */
+  width:100%;
+  height: 100%;
+  display: flex;
 }
-.curTask{
-  background-color: rgb(226, 232, 236);
+.tasklist{
+  width: 66%;
 }
+.curtask{
+  width:34%
+}
+
+
 </style>

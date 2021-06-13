@@ -43,7 +43,7 @@
         </el-input>
       </el-form-item>
       <el-form-item label="性别">
-        <el-select v-model="form.userSex">
+        <el-select v-model="form.sex">
           <el-option label="女" value="0"></el-option>
           <el-option label="男" value="1"></el-option>
         </el-select>
@@ -116,13 +116,14 @@ export default {
         phone: '',
         nickname: '',
         role:'',
-        userSex: '',
+        sex: '',
         password: '',
         rePassword: '',
         birthday: '',
         motto:'',
         safeQuestion:'',
         safeAnswer:'',
+        credit:10000
       },
       registerRules:{
         phone:[
@@ -143,6 +144,7 @@ export default {
   methods: {
     onSubmit() {
       let obj = this.form
+      console.log(obj)
       this.$refs.form.validate(async valid =>{
         if(!valid) return;
         const {data:res} = await this.$http.post("addUserr", obj);//访问后台，await解析，赋值给res
@@ -150,11 +152,12 @@ export default {
         if(res.flag == 'ok'){
           this.$message.success("操作成功！！！");
           this.$alert("请牢记，您的id为："+res.userId,{confirmButtonText: '确定'})
-          this.$emit('autoFill',res.userId)
+          //this.$emit('autoFill',res.userId)
+          this.$emit("childrenCancle")
         }else{
           this.$message.error("操作失败！！！");
         }
-      
+
       })
     },
     handleCancle(){

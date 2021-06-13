@@ -2,7 +2,7 @@
   <div>
     <el-input class="inputPart"
       v-model="userId"
-      placeholder="其他用户将会看到的名字"
+      placeholder="请输入您的ID"
       clearable
       maxlength="10"
       show-word-limit>

@@ -126,7 +126,7 @@ export default {
   mounted(){
     //用户信息初始化
     let user = JSON.parse(window.sessionStorage.getItem("user"))
-    this.form.nickname = user.nickName
+    this.form.nickname = user.nickname
     this.form.userId = user.userId
     this.form.role = user.role+""
     this.form.userSex = user.sex+""

@@ -45,44 +45,14 @@
             <i class="el-icon-menu"></i>
             <span slot="title">个人信息</span>
           </el-menu-item>
+          <el-menu-item 
+          index="2"
+           
+          >
+            <i class="el-icon-menu"></i>
+            <span slot="title">账户余额:{{money}}</span>
+          </el-menu-item>
         </el-menu>
-        <!-- <div class="avatar-my" @click="myPageFlag=true" >
-          <el-avatar 
-          src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" 
-          :fit="'contain'" 
-          :size='70'>
-          </el-avatar>
-        </div> -->
-        <!-- <div>
-          <span>
-            个人信息
-          </span>
-        </div> -->
-
-        <!-- <el-menu
-          background-color="#545c64"
-          text-color="#fff"
-          active-text-color="#409eff"
-          :collapse="isCollapse"
-          :collapse-transition="false"
-          :router="true"
-          :default-active="activePath"
-        > -->
-          <!-- 一级菜单 -->
-          <!-- <el-submenu :index="item.id+''" v-for="item in menuList" :key="item.id">
-            <template slot="title">
-              <i class="el-icon-location"></i>
-              <span>{{item.title}}</span>
-            </template> -->
-            <!-- 二级菜单 -->
-            <!-- <el-menu-item :index="it.path" v-for="it in item.sList" :key="it.id" @click="saveNavState(it.path)">
-              <template slot="title">
-                <i class="el-icon-location"></i>
-                <span>{{it.title}}</span>
-              </template>
-            </el-menu-item>
-          </el-submenu>
-        </el-menu> -->
       </el-aside>
       <!-- 抽屉 -->
       <el-drawer
@@ -107,6 +77,7 @@
 <script>
 import MyMy from "./MyMy";
 import MainPageOuter from "./outer/MainPage"
+import MainPagePerformer from "./performer/MainPage"
 export default {
   data() {
     return {
@@ -117,6 +88,7 @@ export default {
       activePath:'/welcome',//默认路径
       directicon:'👈',
       myPageFlag:false,//控制个人信息抽屉
+      money:''
     }
 
   },
@@ -160,16 +132,27 @@ export default {
     changeAvatar() {
       this.$message.error("更换头像功能还未实现！");
     },
+   
   },
   components: {
     MyMy,
     MainPageOuter,
+    MainPagePerformer,
   },
   computed: {
     showWhat() {
-      //TODO补全逻辑根据当前用户角色显示不同组件
-      return 'MainPageOuter'
-    }
+      //根据当前用户角色显示不同组件
+      if(JSON.parse(window.sessionStorage.getItem("user")).role==1){
+        return 'MainPageOuter'
+      }else{
+        return 'MainPagePerformer'
+      }
+    },
+    
+  },
+  async mounted() {
+    const {data:res} = await this.$http.post("getCreditByUserId", JSON.parse(window.sessionStorage.getItem("user")).userId);//访问后台，await解析，赋值给res
+    this.money = res
   }
 
 };
