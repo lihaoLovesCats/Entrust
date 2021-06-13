@@ -9,6 +9,13 @@
         >
         接受任务
       </el-button>
+      <el-button
+          v-if="!showBtn"
+          style="float: right; padding: 5px "
+          type="button"
+      >
+        取消任务
+      </el-button>
       <!-- <el-button style="float: right; padding: 3px 0" type="text">查看详情</el-button> -->
     </div>
     <div>
@@ -18,7 +25,7 @@
       <span>{{publisherId}}</span>
       <el-divider content-position="left">任务状态</el-divider>
       <span>{{viewState}}</span>
-      <template v-if="state!=0">
+      <template v-if="state!==0">
         <el-divider content-position="left">执行者</el-divider>
         <span>{{performerId}}</span>
       </template>
@@ -43,7 +50,9 @@ export default {
   props: [
     'taskId',
     'publisherId',
+    'publisherName',
     'performerId',
+    'performerName',
     'taskName',
     'description',
     'state',
@@ -58,18 +67,18 @@ export default {
   },
   computed: {
     viewState() {
-      if (this.state==0) {
+      if (this.state===0) {
         return "未接收"
-      }else if (this.state==1) {
+      }else if (this.state===1) {
         return "已被执行者接收"
       }
-      else if (this.state==2) {
+      else if (this.state===2) {
         return "任务执行中"
       }
-      else if (this.state==3) {
+      else if (this.state===3) {
         return "执行者汇报完成任务，等待发布者评价"
       }
-      else if (this.state==4) {
+      else if (this.state===4) {
         return "任务结束"
       }else {
         return "任务异常"
